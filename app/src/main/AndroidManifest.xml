@@ -29,4 +29,16 @@
                 android:value="required" />
     </application>
 
+<<<<<<< HEAD
 </manifest>
+=======
+    <uses-feature
+            android:name="android.hardware.camera.ar"
+            android:required="true" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+</manifest>
+>>>>>>> 4f96d29a586c04ef0de99a41e1a61fdc42154193
