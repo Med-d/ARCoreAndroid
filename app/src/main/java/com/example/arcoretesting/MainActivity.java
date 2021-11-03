@@ -3,6 +3,7 @@ package com.example.arcoretesting;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
@@ -16,7 +17,10 @@ import com.google.ar.core.Anchor;
 import com.google.ar.core.HitResult;
 import com.google.ar.core.Plane;
 import com.google.ar.sceneform.AnchorNode;
+import com.google.ar.sceneform.math.Vector3;
+import com.google.ar.sceneform.rendering.MaterialFactory;
 import com.google.ar.sceneform.rendering.ModelRenderable;
+import com.google.ar.sceneform.rendering.ShapeFactory;
 import com.google.ar.sceneform.ux.ArFragment;
 import com.google.ar.sceneform.ux.TransformableNode;
 
@@ -25,47 +29,37 @@ public class MainActivity extends AppCompatActivity {
     private static final double MIN_OPENGL_VERSION = 3.0;
 
     ArFragment arFragment;
-    ModelRenderable lampPostRenderable;
+    //ModelRenderable lampPostRenderable;
 
     @Override
     @SuppressWarnings({"AndroidApiChecker", "FutureReturnValueIgnored"})
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (!checkIsSupportedDeviceOrFinish(this)) {
-            return;
-        }
+        //if (!checkIsSupportedDeviceOrFinish(this)) {
+        //    return;
+        //}
         setContentView(R.layout.activity_main);
         arFragment = (ArFragment) getSupportFragmentManager().findFragmentById(R.id.ux_fragment);
 
-        ModelRenderable.builder()
-                .setSource(this, Uri.parse("LampPost.sfb"))
-                .build()
-                .thenAccept(renderable -> lampPostRenderable = renderable)
-                .exceptionally(throwable -> {
-                    Toast toast = Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                    return null;
-                });
-
         arFragment.setOnTapArPlaneListener(
                 (HitResult hitresult, Plane plane, MotionEvent motionevent) -> {
-                    if (lampPostRenderable == null){
-                        return;
-                    }
-
                     Anchor anchor = hitresult.createAnchor();
-                    AnchorNode anchorNode = new AnchorNode(anchor);
-                    anchorNode.setParent(arFragment.getArSceneView().getScene());
 
-                    TransformableNode lamp = new TransformableNode(arFragment.getTransformationSystem());
-                    lamp.setParent(anchorNode);
-                    lamp.setRenderable(lampPostRenderable);
-                    lamp.select();
+                    MaterialFactory.makeOpaqueWithColor(this, new com.google.ar.sceneform.rendering.Color(Color.RED))
+                            .thenAccept(material -> {
+                                ModelRenderable renderable = ShapeFactory.makeSphere(1.0f,
+                                        new Vector3(0f, 1f, 1f), material);
+
+                                AnchorNode anchorNode = new AnchorNode(anchor);
+                                anchorNode.setRenderable(renderable);
+                                arFragment.getArSceneView().getScene().addChild(anchorNode);
+                            });
+
                 }
         );
     }
 
+    /*
     public static boolean checkIsSupportedDeviceOrFinish(final Activity activity) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             Log.e(TAG, "Sceneform requires Android N or later");
@@ -85,5 +79,5 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
         return true;
-    }
+    }*/
 }
