@@ -42,8 +42,7 @@ public class MainActivity extends AppCompatActivity {
                 .build()
                 .thenAccept(renderable -> lampPostRenderable = renderable)
                 .exceptionally(throwable -> {
-                    Toast toast =
-                            Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(this, "Unable to load andy renderable", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
                     return null;
